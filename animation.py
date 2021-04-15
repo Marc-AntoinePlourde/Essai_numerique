@@ -9,19 +9,19 @@ import mpl_toolkits.mplot3d.axes3d as p3
 
 
 t = 0
-B_0 = 1
+B_0 = 10
 m_0 = 9.10938356*10**(-31)
 c = 299792458
 q = 1.60217662*10**(-19)
 r = 0.1
-v = np.array([0, 100, 0])
+v = np.array([0, 10000, 0])
 theta = 0
 phi = 90
 z = 0
 pos = np.array([r*np.cos(theta), r*np.sin(theta), z])
 print(pos)
 liste = [pos]
-delta_t = 0.00001
+delta_t = 0.1
 
 sauceur_de_premiere = 0
 
@@ -79,7 +79,7 @@ def transfelec(E, B, v):
     """
     gam = gamma(v)
     n = v / np.linalg.norm(v)
-    E_prime = gam * (E + np.cross(v,B)) - (gam - 1) * (E @ n) * n
+    E_prime = gam * (E + np.cross(v, B)) - (gam - 1) * (E @ n) * n
     B_prime = gam * (B - np.cross(v, E) / c**2) - (gam - 1) * (B @ n) * n
     return [E_prime, B_prime]
 
@@ -106,10 +106,11 @@ def position():
     global v
     global sauceur_de_premiere
     t += delta_t
-    if abs(pos[0]) < 0.2:
-        E = np.array([-200000, 0, 0]) * np.sign(pos[1])
+    if abs(pos[0]) < 0.002:
+        E = np.array([-2, 0, 0]) * np.sign(pos[1])
     else:
         E = np.array([0,0,0])
+
     print(f"pos = {pos}")
     if pos[0] == pos[1]:
         sauceur_de_premiere = 1
@@ -120,12 +121,20 @@ def position():
     # print(f"sauce = {1 - (q * B_0 * r / (m_0 * c))**2}")
     B = np.array([0,0,B_0*gamma(v)])
     E_prime, B_prime = transfelec(E, B, v)
+    print(f"E_prime = {E_prime}")
+    print(f"B_prime = {B_prime}")
     a_prime = q*(E_prime + np.cross(-v,B_prime)) / m_0
+    print(f"cross = {np.cross(-v, B_prime)}")
+    print(f"a_prime = {a_prime}")
     r_prime, t_prime = transfo(pos, v, delta_t)
-    v_f = t_prime * a_prime / 2
+    print(f"r_prime = {r_prime}")
+    print(f"t_prime = {t_prime}")
+    v_f = t_prime * a_prime
+    print(f"v_f = {v_f}")
     # r_prime2 = r_prime + t_prime * v_f
     v = addition(v_f, v)
     pos = pos + v * delta_t
+    print(f"v = {v}")
     # transfo(r_prime2, -u, t_prime)
     return pos
 
@@ -133,7 +142,7 @@ def position():
 fig = plt.figure()
 ax = p3.Axes3D(fig)
 
-nb = 2000
+nb = 50
 
 
 
@@ -152,7 +161,7 @@ def update(num, data, line):
 
 
 
-for i in range(5):
+for i in range(2):
     if sauceur_de_premiere == 1:
         break
     liste.append(position())
@@ -160,17 +169,17 @@ for i in range(5):
 data = np.array(liste).T
 line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 
-ax.set_xlim3d([-15, 15])
+ax.set_xlim3d([-1, 1])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([-15, 15])
+ax.set_ylim3d([-1, 1])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([-15, 15])
+ax.set_zlim3d([-1, 1])
 ax.set_zlabel('Z')
 
 ani = animation.FuncAnimation(fig, update, nb, fargs=(data, line), interval=1000 / nb, blit=False)
-# ani.save('matplot003.gif', writer='imagemagick')
+ani.save('matplot003.gif', writer='imagemagick')
 plt.show()
 
 # new = position()
