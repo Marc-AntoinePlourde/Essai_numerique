@@ -12,7 +12,7 @@ t = 0
 B_0 = 10
 m_0 = 9.10938356*10**(-31)
 c = 299792458
-q = 1.60217662*10**(-19)
+q = -1.60217662*10**(-19)
 r = 0.1
 v = np.array([0, 10000, 0])
 theta = 0
@@ -116,7 +116,7 @@ def position():
         sauceur_de_premiere = 1
     print(f"pos[0] = {pos[0]}")
     print(f"pos[1] = {pos[1]}")
-    r = np.sqrt(pos[0]**2+pos[1]**2)
+    # r = np.sqrt(pos[0]**2+pos[1]**2)
     # print(r)
     # print(f"sauce = {1 - (q * B_0 * r / (m_0 * c))**2}")
     B = np.array([0,0,B_0*gamma(v)])
