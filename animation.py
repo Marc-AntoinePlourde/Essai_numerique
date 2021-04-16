@@ -9,7 +9,7 @@ import mpl_toolkits.mplot3d.axes3d as p3
 
 
 t = 0
-B_0 = 10
+B_0 = 1
 m_0 = 9.10938356*10**(-31)
 c = 299792458
 q = -1.60217662*10**(-19)
@@ -21,8 +21,8 @@ z = 0
 pos = np.array([r*np.cos(theta), r*np.sin(theta), z])
 print(pos)
 liste = [pos]
-delta_t = 0.1
-
+delta_t = 0.00000001
+zero = np.array([0, 0, 0])
 sauceur_de_premiere = 0
 
 
@@ -119,14 +119,14 @@ def position():
     # r = np.sqrt(pos[0]**2+pos[1]**2)
     # print(r)
     # print(f"sauce = {1 - (q * B_0 * r / (m_0 * c))**2}")
-    B = np.array([0,0,B_0*gamma(v)])
+    B = np.array([0,0,B_0]) # *gamma(v)])
     E_prime, B_prime = transfelec(E, B, v)
     print(f"E_prime = {E_prime}")
     print(f"B_prime = {B_prime}")
-    a_prime = q*(E_prime + np.cross(-v,B_prime)) / m_0
-    print(f"cross = {np.cross(-v, B_prime)}")
+    a_prime = q * (E_prime - np.cross(v, B_prime)) / m_0
+    print(f"cross = {np.cross(zero, B_prime)}")
     print(f"a_prime = {a_prime}")
-    r_prime, t_prime = transfo(pos, v, delta_t)
+    t_prime, r_prime  = transfo(pos, v, delta_t)
     print(f"r_prime = {r_prime}")
     print(f"t_prime = {t_prime}")
     v_f = t_prime * a_prime
@@ -161,7 +161,7 @@ def update(num, data, line):
 
 
 
-for i in range(2):
+for i in range(200):
     if sauceur_de_premiere == 1:
         break
     liste.append(position())
@@ -169,13 +169,13 @@ for i in range(2):
 data = np.array(liste).T
 line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 
-ax.set_xlim3d([-1, 1])
+ax.set_xlim3d([0.09, 0.11])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([-1, 1])
+ax.set_ylim3d([-0.01, 0.01])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([-1, 1])
+ax.set_zlim3d([-0.01, 0.01])
 ax.set_zlabel('Z')
 
 ani = animation.FuncAnimation(fig, update, nb, fargs=(data, line), interval=1000 / nb, blit=False)
