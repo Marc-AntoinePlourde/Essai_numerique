@@ -23,12 +23,12 @@ position_de = 0.002
 posinit = np.array([0.0025, 0, 0])
 pos = posinit
 print(pos)
-iterations = 10000
+iterations = 1000000
 cadrage = 0.02
 r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
 cadrage_centre = 0 # 0 ou 1
 liste = []
-delta_t = 0.000000002
+delta_t = 0.000000006
 E = np.array([0, 0, 0])
 sauceur_de_premiere = 0
 nom_de_fichier = f"dt_{delta_t}_it_{iterations}"
@@ -134,7 +134,7 @@ def position():
     # r = np.sqrt(pos[0]**2+pos[1]**2)
     # print(r)
     # print(f"sauce = {1 - (q * B_0 * r / (m_0 * c))**2}")
-    B = np.array([0, 0, B_0 * gam])
+    B = np.array([0, 0, B_0 * mgam / m_0])
     # * gamma(v)])
     # E_prime, B_prime = transfelec(E, B, v)
     # print(f"E = {E}")
