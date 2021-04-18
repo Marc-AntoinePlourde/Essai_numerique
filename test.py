@@ -16,23 +16,26 @@ q = -1.60217662*10**(-19)
 r = 0.01
 v_init = np.array([0, 100000, 0])
 v = v_init
+V = np.linalg.norm(v)
 theta = 0
 phi = 270
 z = 0
-position_de = 0.002
+f = 0
+position_de = 0.005
 posinit = np.array([0.0025, 0, 0])
 pos = posinit
 print(pos)
-iterations = 1000000
-cadrage = 0.02
+iterations = 10000
+cadrage = 0.3
 r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
 cadrage_centre = 0 # 0 ou 1
 liste = []
-delta_t = 0.000000006
+delta_t1 = 0.0000006
+delta_t2 = delta_t1 / 100
 E = np.array([0, 0, 0])
 sauceur_de_premiere = 0
-nom_de_fichier = f"dt_{delta_t}_it_{iterations}"
-
+nom_de_fichier = f"dt_{delta_t2}_it_{iterations}"
+delta = delta_t1
 def gamma(v):
     # global sauceur_de_premiere
     V = np.linalg.norm(v)
@@ -119,12 +122,15 @@ def position():
     global pos
     global t
     global v
+    global V
     global sauceur_de_premiere
-    t += delta_t
     if abs(pos[0]) < position_de:
-        E = np.array([20, 0, 0]) * np.sign(pos[1])
+        E = np.array([120, 0, 0]) * np.sign(pos[1])
+        delta = delta_t1 / np.sqrt(V)
     else:
         E = np.array([0,0,0])
+        delta = delta_t2
+    t += delta
     mgam = gamma(v) * m_0
     # print(f"pos = {pos}")
     # if pos[0] == pos[1]:
@@ -153,9 +159,9 @@ def position():
     # print(f"t_prime = {t_prime}")
     V = np.linalg.norm(v)
     # print(f"V = {np.linalg.norm(v)}")
-    pos = pos + v * delta_t
-    v_B = (v + delta_t * a_B)
-    v = v_B * V / np.linalg.norm(v_B) + a_E * delta_t
+    pos = pos + v * delta
+    v_B = (v + delta * a_B)
+    v = v_B * V / np.linalg.norm(v_B) + a_E * delta
     # print(f"v_f = {v_f}")
     # r_prime2 = r_prime + t_prime * v_f
     # v = addition(v_f, v)
@@ -213,9 +219,9 @@ ax.set_ylabel('Y')
 ax.set_zlim3d([posinit[2] * cadrage_centre - r_init - cadrage, posinit[2] * cadrage_centre + r_init + cadrage])
 ax.set_zlabel('Z')
 
-
+print("Will tu sôces.")
 # print(data)
-ani = animation.FuncAnimation(fig, update, nb, fargs=(data, line), interval=1000 / nb, blit=False)
+ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1000 / nb, blit=False)
 ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
 ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
 # print(liste)
