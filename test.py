@@ -25,7 +25,7 @@ position_de = 0.005
 posinit = np.array([0.0025, 0, 0])
 pos = posinit
 print(pos)
-iterations = 100000
+iterations = 1000
 cadrage = 0.3
 r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
 cadrage_centre = 0 # 0 ou 1
@@ -116,6 +116,10 @@ def transfacc(a, v, u):
     return a / gammo**2 - (gam - 1) * (a @ v) * v / (V**2*gammo**3) + (a @ v) * u * gam/(c**2*gammo**3)
 
 
+def champ_electrique(E):
+    global t
+    #signe du champ
+    return E*np.sign(np.sin((2*np.pi*m_0)*t/(q*B_0)))
 
 
 def position():
@@ -127,15 +131,17 @@ def position():
     global sauceur_de_premiere
     mgam = gamma(v) * m_0
     if abs(pos[0]) <= position_de:
-        E = np.array([1200, 0, 0]) * np.sign(pos[1])
         delta = delta_t1 / np.sqrt(V)
+        t += delta
+        E = np.array([1200, 0, 0]) * np.sign(pos[1])
     elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de: # or abs((v * delta_t2)[0]) > 2 * position_de:
         delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
+        t += delta
         E = np.array([0, 0, 0])
     else:
-        E = np.array([0,0,0])
         delta = delta_t2
-    t += delta
+        t += delta
+        E = np.array([0,0,0])
     # print(f"pos = {pos}")
     # if pos[0] == pos[1]:
     #    sauceur_de_premiere = 1
@@ -227,8 +233,8 @@ print("Will tu sôces.")
 # print(data)
 ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
 print("fuck you")
-ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
-ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
+#ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
+#ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
 # print(liste)
 plt.show()
 

@@ -1,9 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d.axes3d as p3
+import numpy as np
 from matplotlib.animation import FuncAnimation
-
-
 
 # ATTENTION:
 # Ce programme a été très peu testé et est susceptible de comporter de nombreuses erreurs. Utilisez-le à vos risques et périls.
