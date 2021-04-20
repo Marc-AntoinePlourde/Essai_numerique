@@ -19,3 +19,14 @@ len(liste) = 1000000
 v = [  3384795.33779519 -24743124.74158913         0.        ]
 V = 24973567.25533219
 pos = [-0.70807903 -0.07370065  0.        ]
+
+ax.set_xlim3d([anime[0, 0] - cadrage, anime[0, 0] + cadrage])
+ax.set_xlabel('X')
+
+ax.set_ylim3d([anime[0, 1] - cadrage, anime[0, 1] + cadrage])
+ax.set_ylabel('Y')
+
+ax.set_zlim3d([anime[0, 2] - cadrage, anime[0, 2] + cadrage])
+ax.set_zlabel('Z')
+
+

@@ -25,16 +25,17 @@ position_de = 0.005
 posinit = np.array([0.0025, 0, 0])
 pos = posinit
 print(pos)
-iterations = 10000
+iterations = 100000
 cadrage = 0.3
 r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
 cadrage_centre = 0 # 0 ou 1
 liste = []
 delta_t1 = 0.0000006
-delta_t2 = delta_t1 / 100
+delta_t2 = delta_t1 / 1000
 E = np.array([0, 0, 0])
 sauceur_de_premiere = 0
 nom_de_fichier = f"dt_{delta_t2}_it_{iterations}"
+nom_de_fichier = "fuck_you"
 delta = delta_t1
 def gamma(v):
     # global sauceur_de_premiere
@@ -124,14 +125,17 @@ def position():
     global v
     global V
     global sauceur_de_premiere
-    if abs(pos[0]) < position_de:
-        E = np.array([120, 0, 0]) * np.sign(pos[1])
+    mgam = gamma(v) * m_0
+    if abs(pos[0]) <= position_de:
+        E = np.array([1200, 0, 0]) * np.sign(pos[1])
         delta = delta_t1 / np.sqrt(V)
+    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de: # or abs((v * delta_t2)[0]) > 2 * position_de:
+        delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
+        E = np.array([0, 0, 0])
     else:
         E = np.array([0,0,0])
         delta = delta_t2
     t += delta
-    mgam = gamma(v) * m_0
     # print(f"pos = {pos}")
     # if pos[0] == pos[1]:
     #    sauceur_de_premiere = 1
@@ -174,7 +178,7 @@ fig = plt.figure()
 # ax = p3.Axes3D(fig)
 ax = plt.axes(projection='3d')
 
-nb = 50
+nb = 1000
 
 
 
@@ -221,7 +225,8 @@ ax.set_zlabel('Z')
 
 print("Will tu sôces.")
 # print(data)
-ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1000 / nb, blit=False)
+ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
+print("fuck you")
 ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
 ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
 # print(liste)
