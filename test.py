@@ -7,7 +7,7 @@ import mpl_toolkits.mplot3d.axes3d as p3
 # ATTENTION:
 # Ce programme a été très peu testé et est susceptible de comporter de nombreuses erreurs. Utilisez-le à vos risques et périls.
 
-
+pi = 3.1415926539793238462
 t = 0
 B_0 = 0.0002
 m_0 = 9.10938356*10**(-31)
@@ -21,18 +21,20 @@ theta = 0
 phi = 270
 z = 0
 f = 0
+phi = 0
 position_de = 0.005
 posinit = np.array([0.0025, 0, 0])
 pos = posinit
 print(pos)
-iterations = 1000
+iterations = 100000
 cadrage = 0.3
 r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
 cadrage_centre = 0 # 0 ou 1
 liste = []
 delta_t1 = 0.0000006
 delta_t2 = delta_t1 / 1000
-E = np.array([0, 0, 0])
+E_des = np.array([0, 0, 0])
+E_entre = np.array([15010, 0, 0])
 sauceur_de_premiere = 0
 nom_de_fichier = f"dt_{delta_t2}_it_{iterations}"
 nom_de_fichier = "fuck_you"
@@ -119,7 +121,15 @@ def transfacc(a, v, u):
 def champ_electrique(E):
     global t
     #signe du champ
-    return E*np.sign(np.sin((2*np.pi*m_0)*t/(q*B_0)))
+    return E * np.sign(np.sin((q * B_0) * t / m_0) + phi)
+
+
+def champ_magnetique():
+    global pos
+    # distance à l'orgine
+    r = np.linalg.norm(pos)
+    # champ qui dépend du facteur gamma
+    return B_0 / np.sqrt(1 - (r * q * B_0 / (m_0 * c))**2)
 
 
 def position():
@@ -133,8 +143,8 @@ def position():
     if abs(pos[0]) <= position_de:
         delta = delta_t1 / np.sqrt(V)
         t += delta
-        E = np.array([1200, 0, 0]) * np.sign(pos[1])
-    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de: # or abs((v * delta_t2)[0]) > 2 * position_de:
+        E = champ_electrique(E_entre)
+    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de:
         delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
         t += delta
         E = np.array([0, 0, 0])
@@ -142,41 +152,13 @@ def position():
         delta = delta_t2
         t += delta
         E = np.array([0,0,0])
-    # print(f"pos = {pos}")
-    # if pos[0] == pos[1]:
-    #    sauceur_de_premiere = 1
-    # print(f"pos[0] = {pos[0]}")
-    # print(f"pos[1] = {pos[1]}")
-    # r = np.sqrt(pos[0]**2+pos[1]**2)
-    # print(r)
-    # print(f"sauce = {1 - (q * B_0 * r / (m_0 * c))**2}")
     B = np.array([0, 0, B_0 * mgam / m_0])
-    # * gamma(v)])
-    # E_prime, B_prime = transfelec(E, B, v)
-    # print(f"E = {E}")
-    # print(f"B = {B}")
     a_E = q * E / (mgam)
     a_B = q * (np.cross(v, B)) / (mgam)
-    # print(f"a_E = {a_E}")
-    # print(f"a_B = {a_B}")
-    # cross = np.cross(v, B)
-    # print(f"cross = {np.cross(v, B)}")
-    # print(f"norme cross = {np.linalg.norm(cross)}")
-    # print(f"dot prod = {v @ cross}")
-    # print(f"a_prime = {a_prime}")
-    # r_prime, t_prime = transfo(pos, v, delta_t)
-    # print(f"r_prime = {r_prime}")
-    # print(f"t_prime = {t_prime}")
     V = np.linalg.norm(v)
-    # print(f"V = {np.linalg.norm(v)}")
     pos = pos + v * delta
     v_B = (v + delta * a_B)
     v = v_B * V / np.linalg.norm(v_B) + a_E * delta
-    # print(f"v_f = {v_f}")
-    # r_prime2 = r_prime + t_prime * v_f
-    # v = addition(v_f, v)
-    # print(f"v = {v}")
-    # transfo(r_prime2, -u, t_prime)
     return pos
 
 
@@ -248,5 +230,9 @@ print(f"len(liste) = {len(liste)}")
 print(f"v = {v}")
 V = np.linalg.norm(v)
 print(f"V = {V}")
+print(f"Beta = {V / c}")
 print(f"pos = {pos}")
+print(f"R = {np.linalg.norm(pos)}")
 print(m_0 * V / (q * B_0))
+print(f"t = {t}")
+print(0.1386204919909253 / 0.6901018201639635)
