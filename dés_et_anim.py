@@ -8,8 +8,11 @@ import mpl_toolkits.mplot3d.axes3d as p3
 # Ce programme a été très peu testé et est susceptible de comporter de nombreuses erreurs. Utilisez-le à vos risques et périls.
 
 pi = 3.1415926539793238462
+# temps initial
 t = 0
+# champ magnétique (en Tesla)
 B_0 = 0.0006
+
 m_0 = 9.10938356*10**(-31)
 c = 299792458
 q = -1.60217662*10**(-19)
@@ -17,9 +20,11 @@ r = 0.01
 v_init = np.array([0, 100000, 0])
 v = v_init
 V = np.linalg.norm(v)
-theta = 0
+
 z = 0
 f = 0
+# rayon des dés
+r = 2
 phi = 0.1
 #position_de = 0.005
 position_de = 0.1
@@ -152,7 +157,7 @@ n = 100
 
 h_1 = np.linspace(-0.5, 0.5, n)
 h_2 = np.linspace(-0.5, -0.49, n)
-r, d = 2, 0.1
+
 #Composante contour de gauche
 thetaa = np.linspace(np.pi / 2, 3*np.pi / 2, n)
 theta_1, h_1 = np.meshgrid(thetaa, h_1)
@@ -200,13 +205,16 @@ plt.show()
 # Données pertinentes à la simulation
 print(f"len(liste) = {len(liste)}")
 print(f"v = {v}")
+print(f"")
 V = np.linalg.norm(v)
 print(f"demi-période moyenne = {sum(liste_périodes) / len(liste_périodes)}")
 print(f"demi-période théorique = {m_0 * np.pi / (q * B_0)}")
 print(f"V = {V}")
 Beta = V / c
 print(f"Beta = {Beta}")
-print(f"gamma = {1/np.sqrt(1-Beta**2)}")
+gamma = 1 / np.sqrt(1-Beta**2)
+print(f"gamma = {gamma}")
+print(f"Énergie cinétique = {(gamma - 1) * m_0 * c**2}")
 print(f"pos = {pos}")
 print(f"R final = {np.linalg.norm(pos)}")
 print(f"t = {t}")
