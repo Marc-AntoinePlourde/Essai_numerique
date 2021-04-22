@@ -159,14 +159,14 @@ h_1 = np.linspace(-0.5, 0.5, n)
 h_2 = np.linspace(-0.5, -0.49, n)
 
 #Composante contour de gauche
-thetaa = np.linspace(np.pi / 2, 3*np.pi / 2, n)
+thetaa = np.linspace(np.pi / 2, 3 * np.pi / 2, n)
 theta_1, h_1 = np.meshgrid(thetaa, h_1)
-x_1 = (-d+r*np.cos(theta_1))
-y_1 = (r*np.sin(theta_1))
+x_1 = r * np.cos(theta_1) - position_de
+y_1 = r * np.sin(theta_1)
 #Composante contour de droite
 theta_2 = np.linspace(-np.pi / 2, np.pi / 2, n)
-x_2 = (d+r*np.cos(theta_2))
-y_2 = (r*np.sin(theta_2))
+x_2 = position_de + r * np.cos(theta_2)
+y_2 = r * np.sin(theta_2)
 z_1 = h_1
 #Composante dessus dessous de gauche
 r_1 = np.linspace(0, 2, n)
@@ -181,11 +181,11 @@ c_2 = np.outer(r_1, np.sin(thetaa))
 ax.plot_wireframe(x_1, y_1, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
 ax.plot_wireframe(x_2, y_2, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
 #top et bot gauche
-ax.plot_wireframe(b_1+d, c_1, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
-ax.plot_wireframe(b_1+d, c_1, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_1+position_de, c_1, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
 #top et bot droite
-ax.plot_wireframe(b_2-d, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
-ax.plot_wireframe(b_2-d, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
 
 ax.set_xlim3d([posinit[0] * cadrage_centre - r_init - cadrage, posinit[0] * cadrage_centre + r_init + cadrage])
 ax.set_xlabel('X')
