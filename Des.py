@@ -6,18 +6,18 @@ from mpl_toolkits.mplot3d import Axes3D
 n = 100
 
 h_1 = np.linspace(-0.5, 0.5, n)
-h_2= np.linspace(-0.5, -0.49, n)
+h_2 = np.linspace(-0.5, -0.49, n)
 r, d = 2, 0.3
 #Composante contour de gauche
 theta = np.linspace(0, np.pi, n)
-theta_1, h_1= np.meshgrid(theta, h_1)
+theta_1, h_1 = np.meshgrid(theta, h_1)
 x_1 = (r*np.cos(theta_1))
 y_1 = (d+r*np.sin(theta_1))
 #Composante contour de gauche
 theta_2 = np.linspace(np.pi, 2*np.pi, n)
 x_2 = (r*np.cos(theta_2))
 y_2 = (-d+r*np.sin(theta_2))
-z_1= h_1
+z_1 = h_1
 #Composante dessus dessous de gauche
 r_1 = np.linspace(0, 2, n)
 b_1 = np.outer(r_1, np.cos(theta_2))
