@@ -12,26 +12,28 @@ pi = 3.1415926539793238462
 t = 0
 
 # champ magnétique (en Tesla)
-m_0 = 1.6726219*10**(-27) #masse au repos utilisé
+# m_0 = 1.6726219*10**(-27) #masse au repos utilisée
+m_0 = 9 * 10**(-31)
 c = 299792458 #Vitesse de la lumière en m/s
-q = 1.60217662*10**(-19) #charge
-v_desire= 0.70* c #Vitesse désiré à la fin de l'accélération
+q = - 1.60217662 * 10**(-19) #charge
+v_desire= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
-B_0 = (m_0 * v_desire) / (q * r) #Champ initial
-v_init = np.array([0, 100000, 0])
+B_0 = (- m_0 * v_desire) / (q * r) #Champ initial
+E_des = np.array([0, 0, 0])
+E_entre = np.array([15000, 0, 0])
+v_init = np.array([100000, 0, 0])
 v = v_init
 V = np.linalg.norm(v)
 position_de = 0.1 # Depuis l'axe des x
-posinit = np.array([0, -0.025, 0])
+r_init = m_0 * np.sqrt(V**2 + 2 * q * np.linalg.norm(E_entre) * position_de / m_0) / (abs(q) * abs(B_0))
+posinit = np.array([0, - r_init / 2, 0])
 pos = posinit
 iterations = 100000 #nombre d'itération fait
-r_init = r+0.1
 cadrage_centre = 0 # 0 ou 1
 liste = []
 delta_t1 = 0.0000006
 delta_t2 = delta_t1 / 1000
-E_des = np.array([0, 0, 0])
-E_entre = np.array([15010, 0, 0])
+
 sauceur_de_premiere = 0
 nom_de_fichier = f"dt_{delta_t2}_it_{iterations}"
 nom_de_fichier = "fuck_you"
@@ -87,7 +89,11 @@ def position():
         E = champ_electrique(E_entre)
         a_E =  q * E / (mgam)
         a_B = E_des
-    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de:
+        V = np.linalg.norm(v)
+        v_B = v + delta * a_B
+        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+        pos = pos + v * delta
+    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de + 0.0001:
         # intermédiaire entre les dés et l'entre-dés
         compteur_de_tours += 0.5
         liste_périodes.append(t - t_1)
@@ -97,6 +103,12 @@ def position():
         B = champ_magnetique()
         a_B = q * (np.cross(v, B)) / (mgam)
         a_E = E_des
+        V = np.linalg.norm(v)
+        signe = np.sign(v[0])
+        v_B = v + delta * a_B
+        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+        pos = pos + v * delta
+        v = V * signe * np.array([1, 0, 0])
     else:
         # quand la particule se trouve dans les dés
         delta = delta_t2
@@ -107,14 +119,17 @@ def position():
         B = champ_magnetique()
         a_B = q * (np.cross(v, B)) / (mgam)
         a_E = E_des
+        V = np.linalg.norm(v)
+        v_B = v + delta * a_B
+        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+        pos = pos + v * delta
     # calcul module de vitesse
-    V = np.linalg.norm(v)
+
     # calcul vitesse due au champ magnétique
-    v_B = v + delta * a_B
+
     # calcul nouvelle vitesse
-    v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+
     # calcul position
-    pos = pos + v * delta
     return pos
 
 
@@ -180,13 +195,13 @@ ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color
 ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 
-ax.set_xlim3d([posinit[0] * cadrage_centre - r_init, posinit[0] * cadrage_centre + r_init])
+ax.set_xlim3d([posinit[0] * cadrage_centre - (r + 0.1), posinit[0] * cadrage_centre + (r+0.1)])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([posinit[1] * cadrage_centre - r_init, posinit[1] * cadrage_centre + r_init])
+ax.set_ylim3d([posinit[1] * cadrage_centre - (r+0.1), posinit[1] * cadrage_centre + (r+0.1)])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([posinit[2] * cadrage_centre - r_init, posinit[2] * cadrage_centre + r_init])
+ax.set_zlim3d([posinit[2] * cadrage_centre - (r+0.1), posinit[2] * cadrage_centre + (r+0.1)])
 ax.set_zlabel('Z')
 
 ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
