@@ -12,10 +12,10 @@ pi = 3.1415926539793238462
 t = 0
 
 # champ magnétique (en Tesla)
-# m_0 = 1.6726219*10**(-27) #masse au repos utilisée
+#m_0 = 1.6726219*10**(-27) #masse au repos utilisée
 m_0 = 9 * 10**(-31)
 c = 299792458 #Vitesse de la lumière en m/s
-q = - 1.60217662 * 10**(-19) #charge
+q = -1.60217662 * 10**(-19) #charge
 v_desire= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
 B_0 = (- m_0 * v_desire) / (q * r) #Champ initial
@@ -25,7 +25,7 @@ v_init = np.array([100000, 0, 0])
 v = v_init
 V = np.linalg.norm(v)
 position_de = 0.1 # Depuis l'axe des x
-r_init = m_0 * np.sqrt(V**2 + 2 * q * np.linalg.norm(E_entre) * position_de / m_0) / (abs(q) * abs(B_0))
+r_init = m_0 * np.sqrt(V**2 + 2 * abs(q) * np.linalg.norm(E_entre) * position_de / m_0) / (abs(q) * abs(B_0))
 posinit = np.array([0, - r_init / 2, 0])
 pos = posinit
 iterations = 100000 #nombre d'itération fait
@@ -227,5 +227,6 @@ print(f"pos = {pos}")
 print(f"R final = {np.linalg.norm(pos)}")
 print(f"t = {t} seconde")
 print(f"nbr de tour: {compteur_de_tours} tours")
-print(f"Énergie cinétique = {(gamma - 1) * m_0 * c**2} Joule")
+print(f"Énergie cinétique = {((gamma - 1) * m_0 * c**2) / abs(q)} eV")
+print(f"Énergie totale = {(m_0 * np.sqrt(V**4 * gamma ** 2  + c**4)) / (1000000 * abs(q))} MeV")
 print(f"Champ magnétique = {B_0} Tesla")
