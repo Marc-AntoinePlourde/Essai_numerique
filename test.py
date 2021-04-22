@@ -174,5 +174,5 @@ Beta = V / c
 print(f"Beta = {Beta}")
 print(f"gamma = {1/np.sqrt(1-Beta**2)}")
 print(f"pos = {pos}")
-print(f"R = {np.linalg.norm(pos)}")
+print(f"R final = {np.linalg.norm(pos)}")
 print(f"t = {t}")
