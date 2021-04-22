@@ -7,14 +7,14 @@ n = 100
 
 h_1 = np.linspace(-0.5, 0.5, n)
 h_2 = np.linspace(-0.5, -0.49, n)
-r, d = 2, 0.3
+r, d = 2, 0.005
 #Composante contour de gauche
-theta = np.linspace(0, np.pi, n)
-theta_1, h_1 = np.meshgrid(theta, h_1)
+thetaa = np.linspace(np.pi / 2, 3*np.pi / 2, n)
+theta_1, h_1 = np.meshgrid(thetaa, h_1)
 x_1 = (r*np.cos(theta_1))
 y_1 = (d+r*np.sin(theta_1))
-#Composante contour de gauche
-theta_2 = np.linspace(np.pi, 2*np.pi, n)
+#Composante contour de droite
+theta_2 = np.linspace(-np.pi / 2, np.pi / 2, n)
 x_2 = (r*np.cos(theta_2))
 y_2 = (-d+r*np.sin(theta_2))
 z_1 = h_1
@@ -25,8 +25,8 @@ c_1 = np.outer(r_1, np.sin(theta_2))
 z_2= np.zeros((n, n))
 
 #Composante dessus dessous de droite
-b_2 = np.outer(r_1, np.cos(theta))
-c_2 = np.outer(r_1, np.sin(theta))
+b_2 = np.outer(r_1, np.cos(thetaa))
+c_2 = np.outer(r_1, np.sin(thetaa))
 
 fig = plt.figure()
 #Fixer la limites des axes
