@@ -10,29 +10,22 @@ import mpl_toolkits.mplot3d.axes3d as p3
 pi = 3.1415926539793238462
 # temps initial
 t = 0
-# champ magnétique (en Tesla)
-B_0 = 0.0006
 
-m_0 = 9.10938356*10**(-31)
-c = 299792458
-q = -1.60217662*10**(-19)
-r = 0.01
+# champ magnétique (en Tesla)
+m_0 = 1.6726219*10**(-27) #masse au repos utilisé
+c = 299792458 #Vitesse de la lumière en m/s
+q = 1.60217662*10**(-19) #charge
+v_desire= 0.70* c #Vitesse désiré à la fin de l'accélération
+r = 2 # rayon des dés
+B_0 = (m_0 * v_desire) / (q * r) #Champ initial
 v_init = np.array([0, 100000, 0])
 v = v_init
 V = np.linalg.norm(v)
-
-z = 0
-f = 0
-# rayon des dés
-r = 2
-phi = 0.1
-#position_de = 0.005
-position_de = 0.1
+position_de = 0.1 # Depuis l'axe des x
 posinit = np.array([0, -0.025, 0])
 pos = posinit
-iterations = 100000
-cadrage = 0.3
-r_init = -m_0 * np.linalg.norm(v_init) / (q * B_0)
+iterations = 100000 #nombre d'itération fait
+r_init = r+0.1
 cadrage_centre = 0 # 0 ou 1
 liste = []
 delta_t1 = 0.0000006
@@ -63,7 +56,7 @@ def gamma(v):
 def champ_electrique(E):
     global t
     #signe du champ
-    return np.sign(pos[1]) * E
+    return - np.sign(pos[1]) * E *np.sign(q)
     # return E * np.sign(np.sin(np.pi * t / 2.4869879291185388e-08))
 
 
@@ -178,22 +171,22 @@ z_2= np.zeros((n, n))
 b_2 = np.outer(r_1, np.cos(thetaa))
 c_2 = np.outer(r_1, np.sin(thetaa))
 #Contour plot
-ax.plot_wireframe(x_1, y_1, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
-ax.plot_wireframe(x_2, y_2, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(x_1, y_1, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
+ax.plot_wireframe(x_2, y_2, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 #top et bot gauche
-ax.plot_wireframe(b_1+position_de, c_1, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
-ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_1+position_de, c_1, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
+ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 #top et bot droite
-ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
-ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
+ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 
-ax.set_xlim3d([posinit[0] * cadrage_centre - r_init - cadrage, posinit[0] * cadrage_centre + r_init + cadrage])
+ax.set_xlim3d([posinit[0] * cadrage_centre - r_init, posinit[0] * cadrage_centre + r_init])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([posinit[1] * cadrage_centre - r_init - cadrage, posinit[1] * cadrage_centre + r_init + cadrage])
+ax.set_ylim3d([posinit[1] * cadrage_centre - r_init, posinit[1] * cadrage_centre + r_init])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([posinit[2] * cadrage_centre - r_init - cadrage, posinit[2] * cadrage_centre + r_init + cadrage])
+ax.set_zlim3d([posinit[2] * cadrage_centre - r_init, posinit[2] * cadrage_centre + r_init])
 ax.set_zlabel('Z')
 
 ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
@@ -214,7 +207,10 @@ Beta = V / c
 print(f"Beta = {Beta}")
 gamma = 1 / np.sqrt(1-Beta**2)
 print(f"gamma = {gamma}")
-print(f"Énergie cinétique = {(gamma - 1) * m_0 * c**2}")
+
 print(f"pos = {pos}")
 print(f"R final = {np.linalg.norm(pos)}")
-print(f"t = {t}")
+print(f"t = {t} seconde")
+print(f"nbr de tour: {compteur_de_tours} tours")
+print(f"Énergie cinétique = {(gamma - 1) * m_0 * c**2} Joule")
+print(f"Champ magnétique = {B_0} Tesla")
