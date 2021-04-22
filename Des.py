@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-
+from matplotlib.patches import FancyArrowPatch
 
 n = 100
 
@@ -43,6 +43,16 @@ ax.plot_wireframe(b_1, c_1-d, z_2+0.5, rstride = 5, cstride = 5, color = 'k', ed
 #top et bot droite
 ax.plot_wireframe(b_2, c_2+d, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
 ax.plot_wireframe(b_2, c_2+d, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.25)
+# faire des fléche de champ
+# Make the grid
+x_fleche, y_fleche, z_fleche = np.meshgrid(np.arange(-2.5, 2.5, 0.8), np.arange(-2.5, 2.5, 0.8), np.arange(-0.5, 0))
+
+# Make the direction data for the arrows
+u = 0
+v = 0
+w = 6
+
+ax.quiver(x_fleche, y_fleche, z_fleche, u, v, w, length=1, normalize=True, color='r')
 #Nommer les axes
 ax.set_xlabel('x')
 ax.set_ylabel('y')
