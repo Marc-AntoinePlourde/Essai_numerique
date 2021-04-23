@@ -23,14 +23,14 @@ def gamma(v):
 # temps initial
 t = 0
 # champ magnétique (en Tesla)
-# m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
+#m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
 m_0 = 9.1093837015 * 10**(-31)
 q = -1.60217662 * 10**(-19) #charge
 v_desiree= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
 B_0 = (- m_0 * v_desiree) / (q * r) #Champ initial
 E_des = np.array([0, 0, 0]) # champ électrique dans les dés (nul)
-E_entre = np.array([10000, 0, 0]) # champ entre les dés
+E_entre = np.array([100000, 0, 0]) # champ entre les dés
 v_init = np.array([100000, 0, 0]) # vecteur de vitesse initiale
 v = v_init # vitesse
 V = np.linalg.norm(v) # grandeur de la vitesse
@@ -39,7 +39,7 @@ position_de = 0.1 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 100000 # nombre d'itération
+iterations = 700000 # nombre d'itération
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.0000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps

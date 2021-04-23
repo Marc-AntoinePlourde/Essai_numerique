@@ -11,7 +11,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b25503c4-3537-415e-b763-f7db34c1d50a" name="Default Changelist" comment="Def champ_elec">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dés_et_anim.py" beforeDir="false" afterPath="$PROJECT_DIR$/dés_et_anim.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
