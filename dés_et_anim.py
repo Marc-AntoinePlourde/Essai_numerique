@@ -23,30 +23,30 @@ def gamma(v):
 # temps initial
 t = 0
 # champ magnétique (en Tesla)
-#m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
-m_0 = 9.1093837015 * 10**(-31)
-q = -1.60217662 * 10**(-19) #charge
+m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
+# m_0 = 9.1093837015 * 10**(-31)
+q = 1.60217662 * 10**(-19) #charge
 v_desiree= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
 B_0 = (- m_0 * v_desiree) / (q * r) #Champ initial
 E_des = np.array([0, 0, 0]) # champ électrique dans les dés (nul)
-E_entre = np.array([100000, 0, 0]) # champ entre les dés
-v_init = np.array([100000, 0, 0]) # vecteur de vitesse initiale
+E_entre = np.array([400000, 0, 0]) # champ entre les dés
+v_init = np.array([500000, 0, 0]) # vecteur de vitesse initiale
 v = v_init # vitesse
 V = np.linalg.norm(v) # grandeur de la vitesse
-position_de = 0.1 # Position des dés par rapport à l'axes des x
+position_de = 0.05 # Position des dés par rapport à l'axes des x
 # rayon de Larmor initial pour calculer la position initiale
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
-posinit = np.array([0, - r_init, 0]) # position initiale
+posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 700000 # nombre d'itération
+iterations = 1000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.0000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
 compteur_de_tours = 0 # un simple nombre qui compte le nombre de tours
 liste_periodes = [] # liste dans laquelle seront placées toutes les périodes
 t_1 = 0 # temps écoulé depuis que la particule est entrée dans ou sortie des dés
-
+theta = 0
 
 
 def champ_electrique():
@@ -65,9 +65,9 @@ def champ_electrique():
 def champ_magnetique():
     global pos
     # distance à l'orgine
-    r = np.linalg.norm([abs(pos[0]) - position_de, pos[1]], pos[2])
+    r = np.linalg.norm([abs(pos[0]) - position_de, pos[1]])
     # pour déterminer lorsque la particule sort du cyclotron
-    if abs(pos[1]) >= r or abs(pos[0]) <= position_de:
+    if abs(np.linalg.norm(pos)) >= 2 or abs(pos[0]) <= position_de:
         return [0, 0, 0]
     # champ qui dépend du facteur gamma calculé selon la position dans le champ magnétique
     return np.array([0, 0, B_0 / np.sqrt(1 - (r * q * B_0 / (m_0 * c))**2)])
@@ -83,10 +83,9 @@ def position():
     global V
     # masse relativiste
     mgam = gamma(v) * m_0
-    if np.sign(abs(pos[0]) - position_de) != np.sign(abs((pos + v * delta_t)[0]) - position_de) and abs(pos[1]) < r:
+    if np.sign(abs(pos[0]) - position_de - 0.0001) != np.sign(abs((pos + v * delta_t)[0]) - position_de - 0.0001) and abs(pos[1]) < r:
         # intermédiaire entre les dés et l'entre-dés
-        delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
-        compteur_de_tours += 0.25
+        delta = abs((abs(pos[0]) - abs(position_de - 0.0001)) / v[0])
         liste_periodes.append(t - t_1)
         t_1 = t
     else:
@@ -106,7 +105,10 @@ def position():
     # calcul vitesse finale
     v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
     # calcul position finale
+    anc_pos = pos
     pos = pos + v * delta
+    if np.sign(pos[0]) != np.sign(anc_pos[0]):
+        compteur_de_tours += 0.5
     return pos
 
 
