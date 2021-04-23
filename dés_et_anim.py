@@ -4,23 +4,33 @@ from matplotlib import pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 
 
-# ATTENTION:
-# Ce programme a été très peu testé et est susceptible de comporter de nombreuses erreurs. Utilisez-le à vos risques et périls.
+pi = 3.1415926539793238462 # pi
+c = 299792458 #Vitesse de la lumière en m/s
+def gamma(v):
+    """
+    Sert à calculer le facteur gamma pour une vitesse donnée.
 
-pi = 3.1415926539793238462
+    param v: vecteur vitesse
+
+    returns:
+    facteur gamma pour cette vitesse
+    """
+    V = np.linalg.norm(v)
+    k = 1 / np.sqrt(1 - V ** 2 / c ** 2)
+    return k
+
+
 # temps initial
 t = 0
-
 # champ magnétique (en Tesla)
-m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
-# m_0 = 9.1093837015 * 10**(-31)
-c = 299792458 #Vitesse de la lumière en m/s
-q = 1.60217662 * 10**(-19) #charge
+# m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
+m_0 = 9.1093837015 * 10**(-31)
+q = -1.60217662 * 10**(-19) #charge
 v_desiree= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
 B_0 = (- m_0 * v_desiree) / (q * r) #Champ initial
 E_des = np.array([0, 0, 0]) # champ électrique dans les dés (nul)
-E_entre = np.array([500000, 0, 0]) # champ entre les dés
+E_entre = np.array([10000, 0, 0]) # champ entre les dés
 v_init = np.array([100000, 0, 0]) # vecteur de vitesse initiale
 v = v_init # vitesse
 V = np.linalg.norm(v) # grandeur de la vitesse
@@ -36,18 +46,7 @@ delta = delta_t # pas de temps
 compteur_de_tours = 0 # un simple nombre qui compte le nombre de tours
 liste_periodes = [] # liste dans laquelle seront placées toutes les périodes
 t_1 = 0 # temps écoulé depuis que la particule est entrée dans ou sortie des dés
-def gamma(v):
-    """
-    Sert à calculer le facteur gamma pour une vitesse donnée.
 
-    param v: vecteur vitesse
-
-    returns:
-    facteur gamma pour cette vitesse
-    """
-    V = np.linalg.norm(v)
-    k = 1 / np.sqrt(1 - V ** 2 / c ** 2)
-    return k
 
 
 def champ_electrique():
@@ -84,7 +83,7 @@ def position():
     global V
     # masse relativiste
     mgam = gamma(v) * m_0
-    if np.sign(abs(pos[0]) - position_de) != np.sign(abs((pos + v * delta_t)[0]) - position_de):
+    if np.sign(abs(pos[0]) - position_de) != np.sign(abs((pos + v * delta_t)[0]) - position_de) and abs(pos[1]) < r:
         # intermédiaire entre les dés et l'entre-dés
         delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
         compteur_de_tours += 0.25
@@ -181,12 +180,6 @@ ax.set_ylabel('Y')
 ax.set_zlim3d([0.1-r,0.1+r])
 ax.set_zlabel('Z')
 
-ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
-#ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
-#ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
-# print(liste)
-plt.show()
-
 # Données pertinentes à la simulation
 print(f"len(liste) = {len(liste)}")
 print(f"v = {v}")
@@ -207,3 +200,11 @@ print(f"nbr de tour: {compteur_de_tours} tours")
 print(f"Énergie cinétique = {((gamma - 1) * m_0 * c**2) / abs(q)} eV")
 print(f"Énergie totale = {(m_0 * np.sqrt(V**4 * gamma ** 2  + c**4)) / (1000000 * abs(q))} MeV")
 print(f"Champ magnétique = {B_0} Tesla")
+
+
+ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
+#ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
+#ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
+# print(liste)
+plt.show()
+
