@@ -12,35 +12,30 @@ pi = 3.1415926539793238462
 t = 0
 
 # champ magnétique (en Tesla)
-#m_0 = 1.6726219*10**(-27) #masse au repos utilisée
-m_0 = 9 * 10**(-31)
+m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
+# m_0 = 9.1093837015 * 10**(-31)
 c = 299792458 #Vitesse de la lumière en m/s
-q = -1.60217662 * 10**(-19) #charge
-v_desire= 0.70 * c #Vitesse désirée à la fin de l'accélération
+q = 1.60217662 * 10**(-19) #charge
+v_desiree= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
-B_0 = (- m_0 * v_desire) / (q * r) #Champ initial
-E_des = np.array([0, 0, 0])
-E_entre = np.array([15000, 0, 0])
-v_init = np.array([100000, 0, 0])
-v = v_init
-V = np.linalg.norm(v)
-position_de = 0.1 # Depuis l'axe des x
-r_init = m_0 * np.sqrt(V**2 + 2 * abs(q) * np.linalg.norm(E_entre) * position_de / m_0) / (abs(q) * abs(B_0))
-posinit = np.array([0, - r_init / 2, 0])
-pos = posinit
-iterations = 100000 #nombre d'itération fait
-cadrage_centre = 0 # 0 ou 1
-liste = []
-delta_t1 = 0.0000006
-delta_t2 = delta_t1 / 1000
-
-sauceur_de_premiere = 0
-nom_de_fichier = f"dt_{delta_t2}_it_{iterations}"
-nom_de_fichier = "fuck_you"
-delta = delta_t1
-compteur_de_tours = 0
-liste_périodes = []
-t_1 = 0
+B_0 = (- m_0 * v_desiree) / (q * r) #Champ initial
+E_des = np.array([0, 0, 0]) # champ électrique dans les dés (nul)
+E_entre = np.array([500000, 0, 0]) # champ entre les dés
+v_init = np.array([100000, 0, 0]) # vecteur de vitesse initiale
+v = v_init # vitesse
+V = np.linalg.norm(v) # grandeur de la vitesse
+position_de = 0.1 # Position des dés par rapport à l'axes des x
+# rayon de Larmor initial pour calculer la position initiale
+r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
+posinit = np.array([0, - r_init, 0]) # position initiale
+pos = posinit # position dans le cyclotron
+iterations = 100000 # nombre d'itération
+liste = [] # liste dans laquelle seront placées toutes les positions
+delta_t = 0.0000000006 # pas de temps entre et dans les dés en secondes
+delta = delta_t # pas de temps
+compteur_de_tours = 0 # un simple nombre qui compte le nombre de tours
+liste_periodes = [] # liste dans laquelle seront placées toutes les périodes
+t_1 = 0 # temps écoulé depuis que la particule est entrée dans ou sortie des dés
 def gamma(v):
     """
     Sert à calculer le facteur gamma pour une vitesse donnée.
@@ -55,20 +50,27 @@ def gamma(v):
     return k
 
 
-def champ_electrique(E):
+def champ_electrique():
     global t
+    global pos
+    global v
+    # champ qui dépend de la position
+    if abs(pos[0]) <= position_de:
+        E = E_entre
+    else:
+        E = E_des
     #signe du champ
-    return - np.sign(pos[1]) * E *np.sign(q)
-    # return E * np.sign(np.sin(np.pi * t / 2.4869879291185388e-08))
+    return np.sign(v[0]) * E * np.sign(q)
 
 
 def champ_magnetique():
     global pos
     # distance à l'orgine
     r = np.linalg.norm([abs(pos[0]) - position_de, pos[1]], pos[2])
-    # champ qui dépend du facteur gamma
-    if pos[0] >= 2:
+    # pour déterminer lorsque la particule sort du cyclotron
+    if abs(pos[1]) >= r or abs(pos[0]) <= position_de:
         return [0, 0, 0]
+    # champ qui dépend du facteur gamma calculé selon la position dans le champ magnétique
     return np.array([0, 0, B_0 / np.sqrt(1 - (r * q * B_0 / (m_0 * c))**2)])
 
 
@@ -82,59 +84,34 @@ def position():
     global V
     # masse relativiste
     mgam = gamma(v) * m_0
-    if abs(pos[0]) <= position_de:
-        # quand la particule se trouve entre les dés
-        delta = delta_t1 / np.sqrt(V)
-        t += delta
-        E = champ_electrique(E_entre)
-        a_E =  q * E / (mgam)
-        a_B = E_des
-        V = np.linalg.norm(v)
-        v_B = v + delta * a_B
-        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
-        pos = pos + v * delta
-    elif (pos + v * delta_t2)[0] * np.sign(pos[0]) < position_de + 0.0001:
+    if np.sign(abs(pos[0]) - position_de) != np.sign(abs((pos + v * delta_t)[0]) - position_de):
         # intermédiaire entre les dés et l'entre-dés
-        compteur_de_tours += 0.5
-        liste_périodes.append(t - t_1)
         delta = abs((abs(pos[0]) - abs(position_de)) / v[0])
+        compteur_de_tours += 0.25
+        liste_periodes.append(t - t_1)
         t_1 = t
-        t += delta
-        B = champ_magnetique()
-        a_B = q * (np.cross(v, B)) / (mgam)
-        a_E = E_des
-        V = np.linalg.norm(v)
-        signe = np.sign(v[0])
-        v_B = v + delta * a_B
-        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
-        pos = pos + v * delta
-        v = V * signe * np.array([1, 0, 0])
     else:
-        # quand la particule se trouve dans les dés
-        delta = delta_t2
-        t += delta
-        # calcul champ électrique
-        E = np.array([0,0,0])
-        # calcul champ magnétique
-        B = champ_magnetique()
-        a_B = q * (np.cross(v, B)) / (mgam)
-        a_E = E_des
-        V = np.linalg.norm(v)
-        v_B = v + delta * a_B
-        v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
-        pos = pos + v * delta
+        # quand la particule se trouve entre ou dans les dés
+        delta = delta_t
+    t += delta
+    # calcul champ électrique et magnétique
+    E = champ_electrique()
+    B = champ_magnetique()
+    # calcul accélération causée par chaque type d'accélération
+    a_E = q * E / (mgam)
+    a_B = q * np.cross(v, B) / mgam
     # calcul module de vitesse
-
-    # calcul vitesse due au champ magnétique
-
-    # calcul nouvelle vitesse
-
-    # calcul position
+    V = np.linalg.norm(v)
+    # vitesse causée par le champ magnétique
+    v_B = v + delta * a_B
+    # calcul vitesse finale
+    v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+    # calcul position finale
+    pos = pos + v * delta
     return pos
 
 
 fig = plt.figure()
-# ax = p3.Axes3D(fig)
 ax = plt.axes(projection='3d')
 
 nb = 1000
@@ -195,13 +172,13 @@ ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color
 ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 
-ax.set_xlim3d([posinit[0] * cadrage_centre - (r + 0.1), posinit[0] * cadrage_centre + (r+0.1)])
+ax.set_xlim3d([0.1-r, 0.1+r])
 ax.set_xlabel('X')
 
-ax.set_ylim3d([posinit[1] * cadrage_centre - (r+0.1), posinit[1] * cadrage_centre + (r+0.1)])
+ax.set_ylim3d([0.1-r, 0.1+r])
 ax.set_ylabel('Y')
 
-ax.set_zlim3d([posinit[2] * cadrage_centre - (r+0.1), posinit[2] * cadrage_centre + (r+0.1)])
+ax.set_zlim3d([0.1-r,0.1+r])
 ax.set_zlabel('Z')
 
 ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
@@ -215,8 +192,8 @@ print(f"len(liste) = {len(liste)}")
 print(f"v = {v}")
 print(f"")
 V = np.linalg.norm(v)
-print(f"demi-période moyenne = {sum(liste_périodes) / len(liste_périodes)}")
-print(f"demi-période théorique = {m_0 * np.pi / (q * B_0)}")
+print(f"période moyenne = {4 * sum(liste_periodes) / len(liste_periodes)}")
+print(f"période théorique = {4 * np.pi * m_0 / (q * B_0)}")
 print(f"V = {V}")
 Beta = V / c
 print(f"Beta = {Beta}")
