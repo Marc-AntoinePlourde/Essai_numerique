@@ -39,7 +39,7 @@ position_de = 0.05 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 100000 # nombre d'itérations
+iterations = 1000000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.00000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
@@ -121,16 +121,6 @@ nb = 1000
 
 
 
-def update(num, data, line):
-    if num < 1000:
-        n = 0
-    else:
-        n = num - 1000
-    line.set_data(data[:2, :])
-    line.set_3d_properties(data[2, :])
-
-
-
 # on calcule toutes les positions
 for i in range(iterations):
     liste.append(list(position()))
@@ -140,7 +130,8 @@ for i in range(iterations):
 data = np.array(liste).T
 line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 
-
+line.set_data(data[:2, :])
+line.set_3d_properties(data[2, :])
 
 #Pour les dés
 n = 100
@@ -209,7 +200,7 @@ print(f"énergie de masse = {m_0 * c**2 * 6.242 * 10**18 / 1000000}")
 print(f"Champ magnétique = {B_0} Tesla")
 
 
-ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
+# ani = animation.FuncAnimation(fig, update, iterations, fargs=(data, line), interval=1, blit=False)
 #ani.save(f'{nom_de_fichier}.gif', writer='imagemagick')
 #ani.save(f'{nom_de_fichier}.mp4', writer='imagemagick')
 # print(liste)
