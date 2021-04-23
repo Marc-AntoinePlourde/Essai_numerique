@@ -39,7 +39,7 @@ position_de = 0.05 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 1000000 # nombre d'itérations
+iterations = 40000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.00000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
@@ -87,8 +87,7 @@ def position():
     if np.sign(abs(pos[0]) - position_de - 0.0001) != np.sign(abs((pos + v * delta_t)[0]) - position_de - 0.0001) and abs(pos[1]) < r:
         # intermédiaire entre les dés et l'entre-dés
         delta = abs((abs(pos[0]) - abs(position_de - 0.0001)) / v[0])
-        liste_periodes.append(t - t_1)
-        t_1 = t
+
     else:
         # quand la particule se trouve entre ou dans les dés
         delta = delta_t
@@ -110,6 +109,9 @@ def position():
     pos = pos + v * delta
     if np.sign(pos[0]) != np.sign(anc_pos[0]):
         compteur_de_tours += 0.5
+        if pos[0] > 0:
+            liste_periodes.append(t - t_1)
+            t_1 = t
     return pos
 
 
@@ -178,6 +180,18 @@ ax.set_zlim3d([0.1-r,0.1+r])
 ax.set_zlabel('Z')
 
 # Données pertinentes à la simulation
+if m_0 == 9.10938356*10**(-31):
+    print("particule: électron\n")
+elif m_0 == 1.6726219*10**(-27):
+    print("particule: proton\n")
+else:
+    print("particule: inconnu\n")
+print(f"iterations = {iterations}")
+print(f"delta_t = {delta_t}")
+print(f"E = {E_entre}")
+print(f"position_de = {position_de}")
+print(f"v_désirée = {v_desiree}")
+print(f"v_init = {v_init}")
 print(f"len(liste) = {len(liste)}")
 print(f"v = {v}")
 print(f"")

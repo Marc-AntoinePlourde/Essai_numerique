@@ -1,0 +1,19 @@
+iterations = 4 000 000
+delta_t = 0.000 000 000 06
+E = 400 000
+position_de = 0.05
+v_désirée = 0.70
+v_init = 500 000
+période moyenne = 7.86516480490042e-09
+période théorique = -1.1976257268295324e-07
+V = 190185940.86016122
+Beta = 0.6343920128242894
+gamma = 1.2936418206459497
+pos = [-13085.8547227   -2889.43589481      0.        ]
+R final = 13401.060913742196
+t = 0.00023532471382915795 seconde
+nbr de tour: 2663.5 tours
+Énergie cinétique = 275537591.01543707 eV
+Énergie totale = 1213.883465623192 MeV
+énergie de masse = 938.3458746077548
+Champ magnétique = -1.095408574536374 Tesla
