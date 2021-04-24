@@ -39,9 +39,9 @@ position_de = 0.05 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 40000 # nombre d'itérations
+iterations = 4000000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
-delta_t = 0.0000000006 # pas de temps entre et dans les dés en secondes
+delta_t = 0.00000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
 compteur_de_tours = 0 # un simple nombre qui compte le nombre de tours
 liste_periodes = [] # liste dans laquelle seront placées toutes les périodes
@@ -71,7 +71,7 @@ def champ_magnetique():
     if abs(np.linalg.norm(pos)) >= 2 or abs(pos[0]) <= position_de:
         return [0, 0, 0]
     # champ qui dépend du facteur gamma calculé selon la position dans le champ magnétique
-    return np.array([0, 0, B_0 * gamma(v)]) # / np.sqrt(1 - (r * q * B_0 / (m_0 * c))**2)])
+    return np.array([0, 0, B_0 / np.sqrt(1 - (r * q * B_0 / (m_0 * c))**2)])
 
 
 def position():
@@ -103,8 +103,8 @@ def position():
     # vitesse causée par le champ magnétique
     v_B = v + delta * a_B
     # calcul vitesse finale
-    #v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
-    v = v + a_B * delta + a_E * delta
+    v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+    #v = v + a_B * delta + a_E * delta
     # calcul position finale
     anc_pos = pos
     pos = pos + v * delta
@@ -136,40 +136,7 @@ line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 line.set_data(data[:2, :])
 line.set_3d_properties(data[2, :])
 
-#Pour les dés
-n = 100
 
-h_1 = np.linspace(-0.5, 0.5, n)
-h_2 = np.linspace(-0.5, -0.49, n)
-
-#Composante contour de gauche
-thetaa = np.linspace(np.pi / 2, 3 * np.pi / 2, n)
-theta_1, h_1 = np.meshgrid(thetaa, h_1)
-x_1 = r * np.cos(theta_1) - position_de
-y_1 = r * np.sin(theta_1)
-#Composante contour de droite
-theta_2 = np.linspace(-np.pi / 2, np.pi / 2, n)
-x_2 = position_de + r * np.cos(theta_2)
-y_2 = r * np.sin(theta_2)
-z_1 = h_1
-#Composante dessus dessous de gauche
-r_1 = np.linspace(0, 2, n)
-b_1 = np.outer(r_1, np.cos(theta_2))
-c_1 = np.outer(r_1, np.sin(theta_2))
-z_2= np.zeros((n, n))
-
-#Composante dessus dessous de droite
-b_2 = np.outer(r_1, np.cos(thetaa))
-c_2 = np.outer(r_1, np.sin(thetaa))
-#Contour plot
-ax.plot_wireframe(x_1, y_1, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
-ax.plot_wireframe(x_2, y_2, z_1, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
-#top et bot gauche
-ax.plot_wireframe(b_1+position_de, c_1, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
-ax.plot_wireframe(b_1+position_de, c_1, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
-#top et bot droite
-ax.plot_wireframe(b_2-position_de, c_2, z_2-0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
-ax.plot_wireframe(b_2-position_de, c_2, z_2+0.5, rstride = 5, cstride = 5, color = 'k', edgecolors = 'k', alpha = 0.15)
 
 ax.set_xlim3d([0.1-r, 0.1+r])
 ax.set_xlabel('X')
@@ -181,6 +148,7 @@ ax.set_zlim3d([0.1-r,0.1+r])
 ax.set_zlabel('Z')
 
 # Données pertinentes à la simulation
+print(liste_periodes)
 if m_0 == 9.10938356*10**(-31):
     print("particule: électron\n")
 elif m_0 == 1.6726219*10**(-27):
