@@ -39,7 +39,7 @@ position_de = 0.05 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 100000 # nombre d'itérations
+iterations = 1000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.00000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
@@ -120,6 +120,12 @@ nb = 1000
 
 
 ### début de l'emprunt à https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib.
+
+def update(num, data, line):
+    line.set_data(data[:2, n:])
+    line.set_3d_properties(data[2, n:])
+
+
 
 # on calcule toutes les positions
 for i in range(iterations):
