@@ -119,17 +119,7 @@ ax = plt.axes(projection='3d')
 nb = 1000
 
 
-
-
-def update(num, data, line):
-    if num < 1000:
-        n = 0
-    else:
-        n = num - 1000
-    line.set_data(data[:2, :])
-    line.set_3d_properties(data[2, :])
-
-
+### début de l'emprunt à https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib.
 
 # on calcule toutes les positions
 for i in range(iterations):
@@ -140,7 +130,7 @@ for i in range(iterations):
 data = np.array(liste).T
 line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 
-
+### fin de l'emprunt
 
 #Pour les dés
 n = 100

@@ -126,6 +126,9 @@ nb = 1000
 
 
 # on calcule toutes les positions
+
+### début de l'emprunt de code à l'adresse suivante: https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib
+
 for i in range(iterations):
     liste.append(list(position()))
 
@@ -137,7 +140,7 @@ line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 line.set_data(data[:2, :])
 line.set_3d_properties(data[2, :])
 
-
+### fin de l'emprunt
 
 ax.set_xlim3d([0.1-r, 0.1+r])
 ax.set_xlabel('X')

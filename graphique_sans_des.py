@@ -23,14 +23,14 @@ def gamma(v):
 # temps initial
 t = 0
 # champ magnétique (en Tesla)
-m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
-# m_0 = 9.1093837015 * 10**(-31)
-q = 1.60217662 * 10**(-19) #charge
+# m_0 = 1.6726219*10**(-27) #masse au repos utilisée pour le proton
+m_0 = 9.1093837015 * 10**(-31)
+q = - 1.60217662 * 10**(-19) #charge
 v_desiree= 0.70 * c #Vitesse désirée à la fin de l'accélération
 r = 2 # rayon des dés
 B_0 = (- m_0 * v_desiree) / (q * r) #Champ initial
 E_des = np.array([0, 0, 0]) # champ électrique dans les dés (nul)
-E_entre = np.array([400000, 0, 0]) # champ entre les dés
+E_entre = np.array([15000, 0, 0]) # champ entre les dés
 v_init = np.array([500000, 0, 0]) # vecteur de vitesse initiale
 v = v_init # vitesse
 V = np.linalg.norm(v) # grandeur de la vitesse
@@ -39,7 +39,7 @@ position_de = 0.05 # Position des dés par rapport à l'axes des x
 r_init = m_0 * np.sqrt(V**2 + 2 * abs(q * np.linalg.norm(E_entre) * position_de / m_0)) / (abs(q) * abs(B_0))
 posinit = np.array([0.0000001, - r_init, 0]) # position initiale
 pos = posinit # position dans le cyclotron
-iterations = 4000000 # nombre d'itérations
+iterations = 40000 # nombre d'itérations
 liste = [] # liste dans laquelle seront placées toutes les positions
 delta_t = 0.00000000006 # pas de temps entre et dans les dés en secondes
 delta = delta_t # pas de temps
@@ -103,8 +103,8 @@ def position():
     # vitesse causée par le champ magnétique
     v_B = v + delta * a_B
     # calcul vitesse finale
-    v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
-    #v = v + a_B * delta + a_E * delta
+    #v = (v_B * V / np.linalg.norm(v_B)) + a_E * delta
+    v = v + a_B * delta + a_E * delta
     # calcul position finale
     anc_pos = pos
     pos = pos + v * delta
@@ -125,6 +125,8 @@ nb = 1000
 
 
 # on calcule toutes les positions
+### début du code emprunté à l'adresse https://stackoverflow.com/questions/38118598/3d-animation-using-matplotlib.
+
 for i in range(iterations):
     liste.append(list(position()))
 
@@ -136,7 +138,7 @@ line, = ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 line.set_data(data[:2, :])
 line.set_3d_properties(data[2, :])
 
-
+### fin de l'emprunt
 
 ax.set_xlim3d([0.1-r, 0.1+r])
 ax.set_xlabel('X')
